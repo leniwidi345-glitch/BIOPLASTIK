@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUMP TO SEE - BIOPLASTIK</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #e8f5e9;
+            --accent: #1565c0;
+            --text: #333333;
+            --bg: #f5f5f5;
+            --white: #ffffff;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        .container { width: 100%; max-width: 650px; background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 30px; min-height: 500px; position: relative; display: flex; flex-direction: column; }
+        .page { display: none; flex-direction: column; flex-grow: 1; }
+        .page.active { display: flex; }
+
+        .cover-title { font-size: 32px; font-weight: 800; text-align: center; color: var(--primary); margin-top: 10px; letter-spacing: 2px; }
+        .cover-subtitle { font-size: 26px; font-weight: 700; text-align: center; color: #555; margin-bottom: 10px; }
+        .cover-image-container { text-align: center; margin: 10px 0; display: flex; justify-content: center; align-items: center; }
+
+        
+.singkong-3d-wrapper {
+    width: 250px;
+    height: 300px;
+    perspective: 800px;
+}
+
+.singkong-3d-card {
+    width: 100%;
+    height: 100%;
+    animation: floatAndRotate 4s ease-in-out infinite;
+}
+
+.singkong-real-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 8px rgba(0,0,0,.2));
+}
+
+@keyframes floatAndRotate {
+    0%, 100% {
+        transform: translateY(0) rotateY(-8deg);
+    }
+    50% {
+        transform: translateY(-12px) rotateY(8deg);
+    }
+}
+
+        .acronym-box { background: var(--primary-light); border-left: 5px solid var(--primary); padding: 15px; border-radius: 4px; margin: 20px 0; text-align: center; }
+        .acronym-text { font-size: 16px; font-weight: 600; color: #222; line-height: 1.8; }
+        .acronym-letter { color: var(--primary); font-size: 20px; font-weight: 900; background: rgba(46, 125, 50, 0.1); padding: 2px 6px; border-radius: 4px; margin-right: 2px; }
+        .cover-footer { margin-top: auto; text-align: center; font-weight: 700; color: var(--primary); font-style: italic; padding: 15px 0; border-top: 1px dashed #ccc; line-height: 1.4; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #444; }
+        input[type="text"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        textarea { resize: vertical; min-height: 80px; }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: auto; padding-top: 25px; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 15px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #235e26; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #d5d5d5; }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-accent:hover { background: #0d47a1; }
+
+        h2 { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        h3 { margin: 15px 0 8px 0; color: #333; }
+        ul, ol { padding-left: 20px; margin-bottom: 15px; }
+        li { margin-bottom: 5px; }
+        .radio-group { margin: 10px 0; }
+        .radio-option { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 14px; }
+        th { background-color: var(--primary-light); color: #222; }
+
+        .celebration { text-align: center; padding: 40px 20px; animation: fadeIn 1.5s ease-in-out; }
+        .celebration h3 { font-size: 28px; font-weight: 700; color: var(--primary); margin-bottom: 15px; font-style: italic; }
+        .celebration p { font-size: 16px; color: #555; margin-top: 20px; line-height: 1.8; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: #fff; width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; }
+        .modal-card h3 { color: var(--primary); text-align: center; margin-bottom: 15px; }
+        .quiz-item { margin-bottom: 15px; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary); }
+        .quiz-question { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+        .quiz-option { font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .hint-text { font-size: 12px; color: #d32f2f; margin-top: 5px; font-style: italic; display: none; }
+
+        .access-granted-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: #2e7d32; color: #fff; padding: 20px 40px; border-radius: 12px; font-weight: 800; font-size: 24px; letter-spacing: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 2000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
+        .access-granted-popup.show { transform: translate(-50%, -50%) scale(1); }
+
+        .transition-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1500; display: none; pointer-events: none; }
+        .door { position: absolute; top: 0; width: 50%; height: 100%; background: #4a2c11; border: 6px solid #2b190a; transition: transform 1.2s ease-in-out; display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .door-left { left: 0; transform-origin: left; border-right: 3px solid #1a0f06; }
+        .door-right { right: 0; transform-origin: right; border-left: 3px solid #1a0f06; }
+        .door-knob { width: 28px; height: 28px; background: #ffd700; border-radius: 50%; box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5); }
+        .transition-overlay.active .door-left { transform: translateX(-100%); }
+        .transition-overlay.active .door-right { transform: translateX(100%); }
+
+        .stage-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; z-index: 10; }
+        #stairCanvas { width: 100%; max-width: 550px; height: 380px; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; width: 100%; padding: 0; }
+            .page { display: flex !important; page-break-after: always; margin-bottom: 30px; }
+            .nav-buttons, .modal-overlay, .transition-overlay, .access-granted-popup { display: none !important; }
+            input[type="text"], textarea, select { border: none; border-bottom: 1px solid #000; background: transparent; }
+        }
+    </style>
+</head>
+<body onclick="unlockAudio()">
+
+<div class="container">
+
+    <!-- PAGE 0: COVER -->
+    <div class="page active" id="page-0">
+        <div class="cover-title">JUMP TO SEE</div>
+        <div class="cover-subtitle">BIOPLASTIK</div>
+
+        
+<div class="cover-image-container">
+    <div class="singkong-3d-wrapper">
+        <div class="singkong-3d-card">
+            <img
+                src="gambar/singkong.png"
+                alt="Gambar singkong"
+                class="singkong-real-image"
+            >
+        </div>
+    </div>
+</div>
+        
+        <div class="acronym-box">
+            <div class="acronym-text">
+                "<span class="acronym-letter">J</span>eli • 
+                <span class="acronym-letter">U</span>sut • 
+                <span class="acronym-letter">M</span>encoba &amp; Mengumpulkan Data • 
+                <span class="acronym-letter">P</span>aparkan 
+                <br>TO SEE WIDER"
+            </div>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <div class="form-group">
+                <label>Nama :</label>
+                <input type="text" id="input-nama" class="auto-save" placeholder="Tulis nama lengkap">
+            </div>
+            <div class="form-group">
+                <label>Kelas :</label>
+                <input type="text" id="input-kelas" class="auto-save" placeholder="Tulis kelas">
+            </div>
+        </div>
+
+        <div style="margin-top: 15px; font-size: 14px; color: #555;">
+            <p><strong>Guru:</strong> Budi Hartati, SP, MP</p>
+            <p><strong>Sekolah:</strong> SPNF SKB WONOGIRI</p>
+        </div>
+
+        <div class="cover-footer">
+            See wider.<br>
+            See a new perspective.<br>
+            See a new you.
+        </div>
+
+        <div class="nav-buttons">
+            <div></div>
+            <button class="btn btn-primary" onclick="requestNextPage(1)">Mulai Lompatan ➔</button>
+        </div>
+    </div>
+
+    <!-- PAGE 1: JELI -->
+    <div class="page" id="page-1">
+        <h2>🪜 TANGGA 1: JELI</h2>
+        <p><em>Membuka Mata &amp; Menyadari Masalah. Mari asah kejelianmu melihat masalah plastik di sekitar kita!</em></p>
+        
+        <h3>🚨 Kasus: Ancaman Sampah Plastik</h3>
+        <p style="font-size: 14px; color: #444; margin-bottom: 10px;">
+            Bumi menghadapi krisis penumpukan sampah plastik konvensional yang butuh ratusan tahun untuk terurai. Sampah mencemari tanah, menyumbat saluran air, hingga menjadi mikroplastik berbahaya bagi kesehatan.
+        </p>
+
+        <h3>👁 Misi Kejelian Lingkungan</h3>
+        <p style="font-size: 14px; font-weight: 600;">Temukan 3 benda plastik di sekitarmu:</p>
+        
+        <div class="form-group">
+            <label>Benda 1:</label>
+            <input type="text" id="jeli-b1" class="auto-save" placeholder="Nama benda | Kegunaan | Dampak jika dibuang">
+        </div>
+        <div class="form-group">
+            <label>Benda 2:</label>
+            <input type="text" id="jeli-b2" class="auto-save" placeholder="Nama benda | Kegunaan | Dampak jika dibuang">
+        </div>
+        <div class="form-group">
+            <label>Benda 3:</label>
+            <input type="text" id="jeli-b3" class="auto-save" placeholder="Nama benda | Kegunaan | Dampak jika dibuang">
+        </div>
+
+        <h3>❓ Pertanyaan &amp; Prediksi</h3>
+        <div class="form-group">
+            <label>Pertanyaanku:</label>
+            <textarea id="jeli-tanya" class="auto-save" placeholder="Apa yang ingin kamu ketahui tentang alternatif plastik?"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Prediksiku: Bisakah kita membuat plastik dari tumbuhan?</label>
+            <div class="radio-group">
+                <div class="radio-option"><input type="radio" name="prediksi" class="auto-save" value="Bisa" id="p1"> <label style="display:inline; font-weight:normal;" for="p1">Bisa</label></div>
+                <div class="radio-option"><input type="radio" name="prediksi" class="auto-save" value="Tidak bisa" id="p2"> <label style="display:inline; font-weight:normal;" for="p2">Tidak bisa</label></div>
+                <div class="radio-option"><input type="radio" name="prediksi" class="auto-save" value="Belum tahu" id="p3"> <label style="display:inline; font-weight:normal;" for="p3">Belum tahu</label></div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="nextPage(0)">🏠 Home</button>
+            <button class="btn btn-primary" onclick="requestNextPage(2)">Lanjut Tangga 2 ➔</button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: USUT -->
+    <div class="page" id="page-2">
+        <h2>🪜 TANGGA 2: USUT</h2>
+        <p><em>Menyelidiki &amp; Memahami Rahasia Sains Bioplastik.</em></p>
+        
+        <h3>💡 Hasil Pengusutan Sains Bioplastik</h3>
+        <p style="font-size: 14px; color: #444; margin-bottom: 10px;">
+            Pati singkong (tapioka) mengandung polimer alami berupa amilosa dan amilopektin. Dengan tambahan formulasi yang tepat, kita bisa mengubah struktur molekulnya menjadi fleksibel layaknya plastik.
+        </p>
+
+        <h3>🧺 Formula &amp; Resep Bioplastik Lengkap:</h3>
+        <ul style="font-size: 14px; color: #333;">
+            <li><strong>🌾 Pati Tapioka:</strong> 3 sdm (Sumber rantai polimer alami)</li>
+            <li><strong>💧 Air Bersih:</strong> 200 ml (Media pelarut agar butiran pati tersebar merata)</li>
+            <li><strong>🧴 Gliserin:</strong> 1 sdm (Sebagai <em>plasticizer</em>/zat pelemas agar lentur)</li>
+            <li><strong>🍶 Asam Cuka:</strong> 1 sdm (Memotong cabang polimer agar struktur rapat &amp; kuat)</li>
+            <li><strong>🎨 Pewarna Makanan (Opsional):</strong> 2-3 tetes (Pemberi variasi warna estetis)</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="nextPage(0)">🏠 Home</button>
+            <button class="btn btn-secondary" onclick="nextPage(1)">⬅ Kembali</button>
+            <button class="btn btn-primary" onclick="requestNextPage(3)">Lanjut Tangga 3 ➔</button>
+        </div>
+    </div>
+
+    <!-- PAGE 3: MENCOBA & MENGUMPULKAN DATA -->
+    <div class="page" id="page-3">
+        <h2>🪜 TANGGA 3: MENCOBA &amp; DATA</h2>
+        <p><em>Aksi Eksperimen Mandiri &amp; Pencatatan Temuan Kelompok.</em></p>
+
+        <h3 style="margin-top:5px;">📋 Langkah Eksperimen:</h3>
+        <ol style="font-size: 12px; color: #444; margin-bottom: 10px;">
+            <li><strong>Ukur:</strong> Siapkan bahan sesuai takaran resep.</li>
+            <li><strong>Campur &amp; Aduk:</strong> Satukan semua bahan di wadah tahan panas hingga rata.</li>
+            <li><strong>Panaskan:</strong> Gunakan api kecil, aduk terus hingga mengental &amp; bening. *(Wajib didampingi Guru)*</li>
+            <li><strong>Cetak &amp; Keringkan:</strong> Tuang di cetakan datar, ratakan, angin-anginkan 1-3 hari.</li>
+            <li><strong>Kelupas:</strong> Lepaskan perlahan dari tepi jika sudah kering total.</li>
+        </ol>
+
+        <h3>📊 Tabel Pengamatan Data</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Hasil Pengamatan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Warna</strong></td><td><input type="text" id="data-warna" class="auto-save" style="width:100%; border:none; padding:2px;"></td></tr>
+                <tr><td><strong>Tekstur &amp; Permukaan</strong></td><td><input type="text" id="data-tekstur" class="auto-save" style="width:100%; border:none; padding:2px;"></td></tr>
+                <tr><td><strong>Ketebalan &amp; Bentuk</strong></td><td><input type="text" id="data-bentuk" class="auto-save" style="width:100%; border:none; padding:2px;"></td></tr>
+                <tr><td><strong>Kelenturan &amp; Kekuatan</strong></td><td><input type="text" id="data-kekuatan" class="auto-save" style="width:100%; border:none; padding:2px;"></td></tr>
+                <tr><td><strong>Kendala Pengeringan</strong></td><td><input type="text" id="data-kendala" class="auto-save" style="width:100%; border:none; padding:2px;"></td></tr>
+            </tbody>
+        </table>
+
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="nextPage(0)">🏠 Home</button>
+            <button class="btn btn-secondary" onclick="nextPage(2)">⬅ Kembali</button>
+            <button class="btn btn-primary" onclick="requestNextPage(4)">Lanjut Tangga 4 ➔</button>
+        </div>
+    </div>
+
+    <!-- PAGE 4: PAPARKAN -->
+    <div class="page" id="page-4">
+        <h2>🪜 TANGGA 4: PAPARKAN</h2>
+        <p><em>Berbagi Temuan, Refleksi, dan Mengunduh Laporan Akhir.</em></p>
+
+        <div class="form-group" style="margin-top: 10px;">
+            <label>1. Masalah Utama yang Ditemukan:</label>
+            <textarea id="papar-masalah" class="auto-save" placeholder="Jelaskan masalah penumpukan sampah plastik..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>2. Ide Solusi Kelompok:</label>
+            <textarea id="papar-ide" class="auto-save" placeholder="Mengapa memanfaatkan singkong Wonogiri..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>3. Hasil Kelenturan Produk Kami:</label>
+            <select id="papar-lentur" class="auto-save">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Sangat Lentur">Sangat Lentur</option>
+                <option value="Cukup Lentur">Cukup Lentur</option>
+                <option value="Kaku">Kaku</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>4. Rencana Perbaikan Selanjutnya:</label>
+            <input type="text" id="papar-perbaikan" class="auto-save" placeholder="Contoh: Mengubah kadar gliserin / mempersingkat jemur">
+        </div>
+
+        <div class="nav-buttons" style="margin-top:20px;">
+            <button class="btn btn-secondary" onclick="nextPage(0)">🏠 Home</button>
+            <button class="btn btn-secondary" onclick="nextPage(3)">⬅ Kembali</button>
+            <button class="btn btn-accent" onclick="saveAndSubmit()">🚀 Kirim Laporan &amp; Simpan PDF Semua Halaman</button>
+        </div>
+    </div>
+
+    <!-- PAGE 5: FINAL CELEBRATION -->
+    <div class="page" id="page-final">
+        <div class="celebration">
+            <h3>See wider,<br>see a new perspective,<br>see a new you. ✨</h3>
+            <p>
+                Selamat! Kamu telah berhasil melompat hingga anak tangga tertinggi. <br>
+                Laporan digital seluruh halamanmu sedang disimpan sebagai PDF. <br>
+                Mari terus berinovasi untuk menjaga kelestarian bumi kita! 🌱
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL KUIS KUNCI AKSES -->
+<div class="modal-overlay" id="quiz-modal">
+    <div class="modal-card">
+        <h3>🔑 Kunci Akses Masuk Tangga</h3>
+        <p style="font-size: 13px; color: #666; text-align: center; margin-bottom: 15px;">Jawab 4 soal berikut dengan benar untuk membuka pintu!</p>
+        <div id="quiz-questions-container"></div>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="validateQuizAnswers()">Verifikasi Kunci Akses 🗝</button>
+    </div>
+</div>
+
+<!-- POPUP ACCESS GRANTED -->
+<div class="access-granted-popup" id="access-popup">
+    ACCESS GRANTED! 🔑✨
+</div>
+
+<!-- TRANSITION LAYER WITH CANVAS ANIMATION -->
+<div class="transition-overlay" id="transition-overlay">
+    <div class="stage-view">
+        <canvas id="stairCanvas" width="550" height="380"></canvas>
+    </div>
+    <div class="door door-left"><div class="door-knob"></div></div>
+    <div class="door door-right"><div class="door-knob"></div></div>
+</div>
+
+<script>
+    let pendingTargetPage = null;
+    let animFrameId = null;
+
+    // AUDIO CONTEXT UNLOCKER
+    let audioCtx = null;
+
+    function unlockAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // Suara Melompat Lucu
+    function playBoingSound() {
+        unlockAudio();
+        if(!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.35);
+
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+    }
+
+    // Suara Horay & Tepuk Tangan
+    function playCheerAndApplauseSound() {
+        unlockAudio();
+        if(!audioCtx) return;
+
+        const notes = [261.63, 329.63, 392.00, 523.25];
+        notes.forEach((freq, index) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + (index * 0.12));
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime + (index * 0.12));
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (index * 0.12) + 0.4);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(audioCtx.currentTime + (index * 0.12));
+            osc.stop(audioCtx.currentTime + (index * 0.12) + 0.4);
+        });
+
+        const bufferSize = audioCtx.sampleRate * 2.5;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 1000;
+
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        noiseGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.3);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+
+        noise.start(audioCtx.currentTime + 0.4);
+    }
+
+    // AUTO-SAVE & AUTO-RESTORE
+    document.addEventListener('DOMContentLoaded', () => {
+        restoreFormData();
+        document.querySelectorAll('.auto-save').forEach(elem => {
+            elem.addEventListener('input', saveFormData);
+            elem.addEventListener('change', saveFormData);
+        });
+    });
+
+    function saveFormData() {
+        const formData = {};
+        document.querySelectorAll('.auto-save').forEach(elem => {
+            if (elem.type === 'radio') {
+                if (elem.checked) formData[elem.name] = elem.value;
+            } else {
+                formData[elem.id] = elem.value;
+            }
+        });
+        localStorage.setItem('jump_bioplastik_data', JSON.stringify(formData));
+    }
+
+    function restoreFormData() {
+        const saved = localStorage.getItem('jump_bioplastik_data');
+        if (!saved) return;
+        const formData = JSON.parse(saved);
+
+        document.querySelectorAll('.auto-save').forEach(elem => {
+            if (elem.type === 'radio') {
+                if (formData[elem.name] === elem.value) elem.checked = true;
+            } else if (formData[elem.id] !== undefined) {
+                elem.value = formData[elem.id];
+            }
+        });
+    }
+
+    const quizData = {
+        1: [
+            { q: "1. Mengapa sampah plastik konvensional menjadi masalah utama lingkungan?", options: ["Sangat mudah larut di air", "Butuh ratusan tahun untuk terurai", "Harganya sangat mahal", "Dapat dimakan oleh tumbuhan"], ans: 1, hint: "💡 Hint: Plastik sintetis sangat sulit terurai secara alami." },
+            { q: "2. Apa dampak buruk penumpukan sampah plastik di perairan?", options: ["Air menjadi jernih", "Meningkatkan jumlah ikan", "Berubah menjadi mikroplastik berbahaya", "Membuat terumbu karang cepat tumbuh"], ans: 2, hint: "💡 Hint: Plastik terpecah menjadi partikel yang sangat kecil." },
+            { q: "3. Prinsip awal dari langkah 'JELI' adalah...", options: ["Pura-pura tidak tahu", "Membuka mata & menyadari masalah sekitar", "Langsung membakar plastik", "Membeli wadah plastik baru"], ans: 1, hint: "💡 Hint: Kejelian dimulai dari mengamati sekitar." },
+            { q: "4. Bahan alami alternatif pengganti plastik dinamakan...", options: ["Mikroplastik", "Bioplastik", "Styrofoam", "Plastik PET"], ans: 1, hint: "💡 Hint: Plastik yang ramah lingkungan dan berbasis hayati." }
+        ],
+        2: [
+            { q: "1. Polimer alami apa yang terkandung di dalam pati singkong?", options: ["Glukosa & Sukrosa", "Amilosa & Amilopektin", "Protein & Lemak", "Selulosa sintetis"], ans: 1, hint: "💡 Hint: Dua jenis polimer penyusun pati." },
+            { q: "2. Apa fungsi Gliserin dalam pembuatan bioplastik?", options: ["Pemberi rasa manis", "Bahan pewarna", "Plasticizer / zat pelemas kelenturan", "Bahan pengawet"], ans: 2, hint: "💡 Hint: Mencegah bioplastik menjadi kaku atau rapuh." },
+            { q: "3. Mengapa Asam Cuka ditambahkan ke dalam adonan bioplastik?", options: ["Memotong cabang polimer agar rantai rapat", "Membuat adonan menjadi wangi", "Mengubah warna menjadi merah", "Membuat bioplastik berbusa"], ans: 0, hint: "💡 Hint: Membantu merestrukturisasi rantai polimer." },
+            { q: "4. Air bersih pada campuran resep berfungsi sebagai...", options: ["Media pelarut pati", "Pencegah jamur", "Pelekat otomatis", "Bahan utama pengganti singkong"], ans: 0, hint: "💡 Hint: Membantu meratakan butiran pati saat dipanaskan." }
+        ],
+        3: [
+            { q: "1. Pada tahap pemanasan adonan bioplastik, api yang digunakan harus...", options: ["Sangat besar", "Sedang cenderung membesar", "Api kecil sambil terus diaduk", "Tidak perlu menggunakan api"], ans: 2, hint: "💡 Hint: Mencegah adonan gosong atau menggumpal liar." },
+            { q: "2. Tanda bahwa adonan pati sudah matang dan siap dicetak adalah...", options: ["Teksturnya mengental dan bening/transparan", "Berubah menjadi hitam padat", "Cair seperti air biasa", "Mengeluarkan busa melimpah"], ans: 0, hint: "💡 Hint: Terjadi proses gelatinisasi." },
+            { q: "3. Berapa lama proses pengeringan bioplastik secara alami?", options: ["5 menit", "1-3 hari", "1 bulan", "10 detik"], ans: 1, hint: "💡 Hint: Membutuhkan waktu penguapan kadar air secukupnya." },
+            { q: "4. Mengapa cetakan bioplastik harus diletakkan di permukaan yang datar?", options: ["Agar ketebalan bioplastik merata", "Agar warnanya berubah", "Agar tidak disentuh udara", "Agar bentuknya bulat sempurna"], ans: 0, hint: "💡 Hint: Menjaga ketebalan yang seimbang di semua sisi." }
+        ],
+        4: [
+            { q: "1. Apa keunggulan utama Bioplastik Singkong dibanding plastik biasa?", options: ["Mudah terurai secara alami (biodegradable)", "Tahan api selamanya", "Lebih berat dari besi", "Tidak bisa terurai"], ans: 0, hint: "💡 Hint: Bioplastik ramah bagi mikroorganisme tanah." },
+            { q: "2. Tahap 'PAPARKAN' pada prinsip JUMP bertujuan untuk...", options: ["Menyimpan rahasia hasil", "Berbagi temuan, refleksi, & laporan", "Menjual produk secara paksa", "Lupa pada hasil percobaan"], ans: 1, hint: "💡 Hint: Mempresentasikan ide dan temuan hasil karya." },
+            { q: "3. Jika bioplastik hasil percobaan terlalu kaku, rencana perbaikan yang tepat adalah...", options: ["Menambah takaran Gliserin", "Menghilangkan penggunaan air", "Menambah jumlah cuka 10 kali lipat", "Mengeringkan di dalam oven panas"], ans: 0, hint: "💡 Hint: Gliserin berfungsi sebagai zat pelembut/plasticizer." },
+            { q: "4. Potensi bahan lokal Wonogiri yang dimanfaatkan dalam proyek ini adalah...", options: ["Pati Singkong / Tapioka", "Minyak Bumi", "Biji Plastik Impor", "Gas Alam"], ans: 0, hint: "💡 Hint: Bahan pangan lokal utama daerah Wonogiri." }
+        ]
+    };
+
+    function requestNextPage(targetPage) {
+        unlockAudio();
+        if(quizData[targetPage]) {
+            pendingTargetPage = targetPage;
+            renderQuiz(targetPage);
+            document.getElementById('quiz-modal').style.display = 'flex';
+        } else {
+            nextPage(targetPage);
+        }
+    }
+
+    function renderQuiz(pageNum) {
+        const container = document.getElementById('quiz-questions-container');
+        container.innerHTML = '';
+        const questions = quizData[pageNum];
+
+        questions.forEach((item, index) => {
+            let qHtml = `<div class="quiz-item">
+                <div class="quiz-question">${item.q}</div>`;
+            item.options.forEach((opt, optIdx) => {
+                qHtml += `<label class="quiz-option">
+                    <input type="radio" name="q_${index}" value="${optIdx}"> ${opt}
+                </label>`;
+            });
+            qHtml += `<div class="hint-text" id="hint_${index}">${item.hint}</div></div>`;
+            container.innerHTML += qHtml;
+        });
+    }
+
+    function validateQuizAnswers() {
+        unlockAudio();
+        const questions = quizData[pendingTargetPage];
+        let allCorrect = true;
+
+        questions.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+            const hintElem = document.getElementById(`hint_${index}`);
+            
+            if(selected && parseInt(selected.value) === item.ans) {
+                hintElem.style.display = 'none';
+            } else {
+                allCorrect = false;
+                hintElem.style.display = 'block';
+            }
+        });
+
+        if(allCorrect) {
+            document.getElementById('quiz-modal').style.display = 'none';
+            triggerAccessGranted();
+        }
+    }
+
+    function triggerAccessGranted() {
+        const popup = document.getElementById('access-popup');
+        popup.classList.add('show');
+
+        setTimeout(() => {
+            popup.classList.remove('show');
+            runDoorAndStairAnimation();
+        }, 1200);
+    }
+
+    function runDoorAndStairAnimation() {
+        const overlay = document.getElementById('transition-overlay');
+        overlay.style.display = 'block';
+
+        setTimeout(() => {
+            overlay.classList.add('active');
+            playBoingSound(); // Memutar Suara Melompat
+            animateStairCanvas(pendingTargetPage);
+        }, 100);
+
+        let duration = (pendingTargetPage === 4) ? 4200 : 2800;
+
+        setTimeout(() => {
+            nextPage(pendingTargetPage);
+            overlay.classList.remove('active');
+            overlay.style.display = 'none';
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+        }, duration);
+    }
+
+    function animateStairCanvas(targetStep) {
+        const canvas = document.getElementById('stairCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let progress = 0;
+        const totalSteps = 4;
+        const stepWidth = 90;
+        const stepHeight = 50;
+        const startX = 60;
+        const startY = 300;
+
+        let hasPlayedCheer = false;
+
+        let confetti = [];
+        const confettiColors = ['#ff4081', '#ffd700', '#00e676', '#00b0ff', '#ff9100', '#e040fb'];
+        for(let c = 0; c < 70; c++) {
+            confetti.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * -canvas.height,
+                w: Math.random() * 8 + 4,
+                h: Math.random() * 14 + 6,
+                color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                vy: Math.random() * 3 + 2,
+                vx: Math.random() * 2 - 1,
+                rot: Math.random() * 360,
+                vRot: Math.random() * 10 - 5
+            });
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < totalSteps; i++) {
+                let x = startX + (i * stepWidth);
+                let y = startY - (i * stepHeight);
+
+                let isTarget = (i + 1 === targetStep);
+                ctx.fillStyle = isTarget ? '#81c784' : '#e0e0e0';
+                ctx.strokeStyle = '#2e7d32';
+                ctx.lineWidth = 3;
+
+                ctx.fillRect(x, y, stepWidth, stepHeight);
+                ctx.strokeRect(x, y, stepWidth, stepHeight);
+
+                ctx.fillStyle = isTarget ? '#1b5e20' : '#555';
+                ctx.font = 'bold 15px sans-serif';
+                ctx.fillText(`Tangga ${i+1}`, x + 10, y + 30);
+            }
+
+            let fromX, fromY, toX, toY;
+            if (targetStep === 1) {
+                fromX = startX - 40;
+                fromY = startY + 20;
+            } else {
+                fromX = startX + ((targetStep - 2) * stepWidth) + 35;
+                fromY = startY - ((targetStep - 2) * stepHeight) - 35;
+            }
+
+            toX = startX + ((targetStep - 1) * stepWidth) + 35;
+            toY = startY - ((targetStep - 1) * stepHeight) - 35;
+
+            let curX = fromX + (toX - fromX) * progress;
+            let jumpArc = Math.sin(progress * Math.PI) * 65; 
+            let curY = fromY + (toY - fromY) * progress - jumpArc;
+
+            drawRealSingkongCharacter(ctx, curX, curY);
+
+            if (targetStep === 4 && progress > 0.4) {
+                if (!hasPlayedCheer) {
+                    playCheerAndApplauseSound();
+                    hasPlayedCheer = true;
+                }
+
+                confetti.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rot += p.vRot;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rot * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+            }
+
+            if (progress < 1) {
+                progress += 0.02;
+                animFrameId = requestAnimationFrame(drawScene);
+            } else if (targetStep === 4) {
+                animFrameId = requestAnimationFrame(drawScene);
+            }
+        }
+
+        progress = 0;
+        drawScene();
+    }
+
+    function drawRealSingkongCharacter(ctx, x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+
+        ctx.strokeStyle = '#a1887f';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(-5, 25); ctx.lineTo(-10, 38);
+        ctx.moveTo(3, 26); ctx.lineTo(5, 42);
+        ctx.moveTo(10, 24); ctx.lineTo(18, 36);
+        ctx.moveTo(-16, 5); ctx.lineTo(-24, 8);
+        ctx.moveTo(16, -2); ctx.lineTo(25, 2);
+        ctx.stroke();
+
+        ctx.fillStyle = '#2e7d32';
+        ctx.beginPath();
+        ctx.ellipse(-8, -28, 5, 12, -Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#4caf50';
+        ctx.beginPath();
+        ctx.ellipse(8, -28, 5, 12, Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        let grad = ctx.createLinearGradient(0, -20, 0, 25);
+        grad.addColorStop(0, '#5d4037');
+        grad.addColorStop(0.5, '#795548');
+        grad.addColorStop(1, '#3e2723');
+        ctx.fillStyle = grad;
+
+        ctx.beginPath();
+        ctx.moveTo(-8, -22);
+        ctx.bezierCurveTo(-22, -10, -20, 15, -4, 26);
+        ctx.bezierCurveTo(8, 26, 22, 12, 12, -10);
+        ctx.bezierCurveTo(8, -20, 0, -24, -8, -22);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#2b1d14';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-5, -5, 4, 0, Math.PI * 2);
+        ctx.arc(6, -5, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-4, -5, 2, 0, Math.PI * 2);
+        ctx.arc(7, -5, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(0, 3, 5, 0, Math.PI);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    function nextPage(pageNumber) {
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => page.classList.remove('active'));
+        
+        let targetId = 'page-' + pageNumber;
+        if(pageNumber === 'final') targetId = 'page-final';
+        
+        document.getElementById(targetId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function saveAndSubmit() {
+        saveFormData();
+
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => page.style.display = 'flex');
+
+        setTimeout(() => {
+            window.print();
+
+            pages.forEach(page => page.style.display = '');
+            nextPage('final');
+        }, 300);
+    }
+</script>
+
+</body>
+</html>
